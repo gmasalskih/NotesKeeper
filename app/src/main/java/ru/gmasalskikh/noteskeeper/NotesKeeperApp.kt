@@ -4,7 +4,6 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import ru.gmasalskikh.noteskeeper.di.secondModule
 import ru.gmasalskikh.noteskeeper.di.titleModule
 import timber.log.Timber
 
@@ -17,8 +16,7 @@ class NotesKeeperApp : Application() {
             androidLogger()
             androidContext(this@NotesKeeperApp)
             modules(
-                titleModule,
-                secondModule
+                titleModule
             )
         }
     }

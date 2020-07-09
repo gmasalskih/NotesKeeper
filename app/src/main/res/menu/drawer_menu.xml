@@ -5,12 +5,8 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/titleScreenFragment"
+            android:id="@+id/listNotesFragment"
             android:icon="@drawable/ic_launcher_background"
-            android:title="titleScreenFragment"/>
-        <item
-            android:id="@+id/secondFragment"
-            android:icon="@drawable/ic_launcher_background"
-            android:title="secondFragment"/>
+            android:title="@string/list_notes"/>
     </group>
 </menu>
