@@ -11,9 +11,7 @@ class ListNotesViewModel : ViewModel() {
     val selectNote: LiveData<Note>
         get() = _selectNote
 
-
     fun onClickNote(note: Note){
         _selectNote.value = note
     }
 }
-
