@@ -10,6 +10,24 @@
         android:name="ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesFragment"
         android:label="@string/list_notes"
         tools:layout="@layout/list_notes_fragment" >
+        <action
+            android:id="@+id/action_listNotesFragment_to_noteDetailsFragment"
+            app:destination="@id/noteDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noteDetailsFragment"
+        android:name="ru.gmasalskikh.noteskeeper.ui.note_details.NoteDetailsFragment"
+        android:label="note_details_fragment"
+        tools:layout="@layout/note_details_fragment" >
+        <action
+            android:id="@+id/action_noteDetailsFragment_to_listNotesFragment"
+            app:destination="@id/listNotesFragment"
+            app:popUpTo="@id/noteDetailsFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
 </navigation>

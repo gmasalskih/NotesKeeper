@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ItemNoteBinding
 
-class NotesListAdapter(private val clickListener: NoteClickListener) :
-    ListAdapter<Note, NotesListAdapter.ViewHolder>(DiffCallback()) {
+class ListNotesAdapter(private val clickListener: NoteClickListener) :
+    ListAdapter<Note, ListNotesAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)

@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Хранитель заметок</string>
     <string name="list_notes">Лист заметок</string>
+    <string name="note_title">Заголовок</string>
+    <string name="save">Сохранить</string>
 </resources>

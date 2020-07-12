@@ -2,13 +2,14 @@ package ru.gmasalskikh.noteskeeper.utils
 
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 
 @BindingAdapter("noteBackgroundColor")
 fun CardView.setBackgroundColor(item: Note?) {
     item?.let { note: Note ->
-        setBackgroundColor(note.color)
+        setBackgroundColor(ResourcesCompat.getColor(resources, note.color, null))
     }
 }
 
