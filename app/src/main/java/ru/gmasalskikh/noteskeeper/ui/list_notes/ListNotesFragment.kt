@@ -7,15 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import ru.gmasalskikh.noteskeeper.R
+
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ListNotesFragmentBinding
 import timber.log.Timber
@@ -45,15 +45,20 @@ class ListNotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.colorPrimaryDark, null))
         val imm =
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
+        val appBarConfiguration= AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         initObserveViewModel()
     }
 
     private fun initObserveViewModel() {
+        binding.fab.setOnClickListener {
+            val action = ListNotesFragmentDirections.actionListNotesFragmentToNoteDetailsFragment(null)
+            navController.navigate(action)
+        }
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             adapter.submitList(viewState.notes)
         })

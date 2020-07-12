@@ -13,19 +13,18 @@ class NoteDetailsViewModel(
     private val id: String?
 ) : ViewModel() {
 
-    private val _backgroundColor = MutableLiveData<Int>()
-    val backgroundColor: LiveData<Int>
-        get() = _backgroundColor
+    private val _currentNote = MutableLiveData<Note>()
+    val currentNote: LiveData<Note>
+        get() = _currentNote
 
     var note: Note = if (id == null) Note()
     else notesRepository.getNoteById(id) ?: Note()
 
     init {
-        _backgroundColor.value = note.color
+        _currentNote.value = note
     }
 
     fun onTextChangeTitle(title: CharSequence) {
-        _backgroundColor.value = note.color
         note = note.copy(
             title = title.toString(),
             lastChanged = Date()
@@ -34,8 +33,6 @@ class NoteDetailsViewModel(
     }
 
     fun onTextChangeText(text: CharSequence){
-        _backgroundColor.value = note.color
-
         note = note.copy(
             text = text.toString(),
             lastChanged = Date()

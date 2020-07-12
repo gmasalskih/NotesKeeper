@@ -5,10 +5,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesFragment">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_notes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_note"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/item_note" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_add_white_24"
+            app:fabSize="normal"
+            app:layout_anchor="@id/rv_notes"
+            app:layout_anchorGravity="bottom|end"
+            app:layout_behavior=".ui.common.FabBehavior" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

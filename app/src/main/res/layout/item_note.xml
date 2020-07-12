@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{()->clickListener.onClick(note)}"
-        app:noteBackgroundColor="@{note}"
+        app:BA_cardView_set_background_color="@{note}"
         android:layout_margin="4dp">
 
     <LinearLayout
@@ -32,7 +32,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            app:noteTitle="@{note}"
+            app:BA_textView_set_title="@{note}"
             tools:text="Very important note"/>
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:noteText="@{note}"
+            app:BA_textView_set_text="@{note}"
             tools:text="My very important note text with very important information"/>
 
     </LinearLayout>

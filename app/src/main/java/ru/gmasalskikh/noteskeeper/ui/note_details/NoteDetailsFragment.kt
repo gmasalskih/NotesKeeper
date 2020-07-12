@@ -9,19 +9,22 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NoteDetailsFragment : Fragment() {
 
     private lateinit var binding: NoteDetailsFragmentBinding
     private lateinit var navController: NavController
     private lateinit var args: NoteDetailsFragmentArgs
-    private val viewModel:NoteDetailsViewModel by viewModel { parametersOf(args.id) }
+    private val viewModel: NoteDetailsViewModel by viewModel { parametersOf(args.id) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,13 +41,16 @@ class NoteDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
         initObserveViewModel()
-        requireActivity().toolbar.title = "sadsadasd"
+        val appBarConfiguration =
+            AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
-    private fun initObserveViewModel(){
-        viewModel.backgroundColor.observe(viewLifecycleOwner, Observer {
-            Timber.i("--- $it")
-            requireActivity().toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, it, null))
+    private fun initObserveViewModel() {
+        viewModel.currentNote.observe(viewLifecycleOwner, Observer { note ->
+            Timber.i("--- $note")
+            binding.toolbar.title = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault()).format(note.lastChanged)
+            binding.toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, note.color, null))
         })
     }
 }
