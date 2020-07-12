@@ -1,7 +1,7 @@
 package ru.gmasalskikh.noteskeeper.utils
 
 import android.widget.TextView
-import android.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter

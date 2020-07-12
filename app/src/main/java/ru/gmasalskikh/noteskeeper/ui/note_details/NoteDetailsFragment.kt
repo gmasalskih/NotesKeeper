@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -15,9 +13,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 
 class NoteDetailsFragment : Fragment() {
 
@@ -40,17 +35,8 @@ class NoteDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
-        initObserveViewModel()
         val appBarConfiguration =
             AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-    }
-
-    private fun initObserveViewModel() {
-        viewModel.currentNote.observe(viewLifecycleOwner, Observer { note ->
-            Timber.i("--- $note")
-            binding.toolbar.title = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault()).format(note.lastChanged)
-            binding.toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, note.color, null))
-        })
     }
 }

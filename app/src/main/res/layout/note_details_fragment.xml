@@ -25,6 +25,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:BA_toolbar_set_title="@{viewModel.note}"
+                app:BA_toolbar_set_background_color="@{viewModel.note}"
                 app:layout_scrollFlags="scroll|enterAlways" />
 
         </com.google.android.material.appbar.AppBarLayout>
