@@ -40,3 +40,4 @@ class NoteDetailsFragment : Fragment() {
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 }
+
