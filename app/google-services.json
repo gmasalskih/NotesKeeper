@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "100983488283",
+    "firebase_url": "https://noteskeeper-775a0.firebaseio.com",
+    "project_id": "noteskeeper-775a0",
+    "storage_bucket": "noteskeeper-775a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100983488283:android:e6c21766e6b525584d1dbe",
+        "android_client_info": {
+          "package_name": "ru.gmasalskikh.noteskeeper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "100983488283-n8odnft8d778kl4em3itchmi951l55gg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.gmasalskikh.noteskeeper",
+            "certificate_hash": "6ca71d8be25d040ffe3d5ed327b67ab8faabd97d"
+          }
+        },
+        {
+          "client_id": "100983488283-ugompp0c72aq3hlcfcbvvo7dtdtiq85d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAON3rpTpCt0fAg6R0J5kriJeBm1Z-aBHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "100983488283-ugompp0c72aq3hlcfcbvvo7dtdtiq85d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

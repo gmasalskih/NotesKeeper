@@ -22,5 +22,4 @@ data class Note(
         this -> 0
         else -> lastChanged.compareTo(other.lastChanged)
     }
-
 }
