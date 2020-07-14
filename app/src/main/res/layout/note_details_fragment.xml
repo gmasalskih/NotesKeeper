@@ -25,8 +25,6 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:BA_toolbar_set_title="@{viewModel.note}"
-                app:BA_toolbar_set_background_color="@{viewModel.note}"
                 app:layout_scrollFlags="scroll|enterAlways" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -52,8 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/note_title"
-                    android:onTextChanged="@{(text, start, before, count)->viewModel.onTextChangeTitle(text)}"
-                    android:text="@{viewModel.note.title}" />
+                    android:onTextChanged="@{(text, start, before, count)->viewModel.onTextChangeTitle(text)}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,7 +63,6 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:onTextChanged="@{(text, start, before, count)->viewModel.onTextChangeText(text)}"
-                android:text="@{viewModel.note.text}"
                 app:layout_constraintBottom_toTopOf="@+id/guideline"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

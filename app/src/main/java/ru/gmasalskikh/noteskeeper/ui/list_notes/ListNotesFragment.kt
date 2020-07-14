@@ -60,7 +60,9 @@ class ListNotesFragment : Fragment() {
             navController.navigate(action)
         }
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            adapter.submitList(viewState.notes)
+            viewState.data?.let {
+                adapter.submitList(it)
+            }
         })
         viewModel.selectNote.observe(viewLifecycleOwner, Observer { note: Note? ->
             if (note != null){

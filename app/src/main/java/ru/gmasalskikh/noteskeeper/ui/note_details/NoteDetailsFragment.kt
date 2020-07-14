@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -38,6 +40,25 @@ class NoteDetailsFragment : Fragment() {
         val appBarConfiguration =
             AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+        initObservers()
     }
+
+    fun initObservers() {
+        viewModel.getViewState().observe(viewLifecycleOwner, Observer { viewState ->
+            viewState.data?.let { note ->
+                binding.noteTitle.setText(note.title)
+                binding.noteText.setText(note.text)
+                binding.toolbar.setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        note.color,
+                        null
+                    )
+                )
+            }
+
+        })
+    }
+
 }
 

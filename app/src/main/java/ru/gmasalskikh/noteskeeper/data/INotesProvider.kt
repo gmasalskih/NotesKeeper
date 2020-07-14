@@ -2,10 +2,10 @@ package ru.gmasalskikh.noteskeeper.data
 
 import androidx.lifecycle.LiveData
 import ru.gmasalskikh.noteskeeper.data.entity.Note
+import ru.gmasalskikh.noteskeeper.data.model.NoteResult
 
 interface INotesProvider {
-    fun saveNote(note: Note)
-    fun getNotes(): LiveData<List<Note>>
-    fun getNoteById(id: String): Note?
-    fun getNoteByIndex(index: Int): Note?
+    fun subscribeToAllNotes(): LiveData<NoteResult>
+    fun getNoteById(id: String): LiveData<NoteResult>
+    fun saveNote(note: Note): LiveData<NoteResult>
 }

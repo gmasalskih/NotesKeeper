@@ -40,7 +40,7 @@ class ListNotesAdapter(private val clickListener: NoteClickListener) :
 
     class DiffCallback : DiffUtil.ItemCallback<Note>() {
         override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
-            return oldItem == newItem
+            return oldItem === newItem
         }
 
         override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
