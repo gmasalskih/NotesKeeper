@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -29,7 +30,6 @@ class NoteDetailsFragment : Fragment() {
     ): View? {
         binding = NoteDetailsFragmentBinding.inflate(inflater, container, false)
         args = NoteDetailsFragmentArgs.fromBundle(requireArguments())
-        binding.viewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -40,10 +40,12 @@ class NoteDetailsFragment : Fragment() {
         val appBarConfiguration =
             AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-        initObservers()
+        initState()
     }
 
-    private fun initObservers() {
+    private fun initState() {
+        binding.noteTitle.addTextChangedListener { viewModel.onTextChangeTitle(it.toString()) }
+        binding.noteText.addTextChangedListener { viewModel.onTextChangeText(it.toString()) }
         viewModel.getViewState().observe(viewLifecycleOwner, Observer { viewState ->
             viewState.data?.let { note ->
                 binding.noteTitle.setText(note.title)
@@ -56,9 +58,6 @@ class NoteDetailsFragment : Fragment() {
                     )
                 )
             }
-
         })
     }
-
 }
-

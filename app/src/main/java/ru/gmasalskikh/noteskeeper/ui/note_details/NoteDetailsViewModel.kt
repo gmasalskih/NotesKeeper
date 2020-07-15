@@ -1,30 +1,24 @@
 package ru.gmasalskikh.noteskeeper.ui.note_details
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.model.NoteResult
-import ru.gmasalskikh.noteskeeper.ui.BaseViewState
+import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
 
 class NoteDetailsViewModel(
     private val notesRepository: NotesRepository,
     id: String?
-) : ViewModel() {
+) : BaseViewModel<Note?, NoteDetailsViewState>() {
 
     private var note: Note? = null
-    private val _viewState = MutableLiveData<BaseViewState<Note?>>()
     private val observer = Observer<NoteResult> { noteResult ->
         when (noteResult) {
             is NoteResult.Success<*> -> {
                 (noteResult.data as? Note)?.let { note = it }
                 setNewViewState(NoteDetailsViewState(data = note))
             }
-            is NoteResult.Error -> {
-                setNewViewState(NoteDetailsViewState(err = noteResult.err))
-            }
+            is NoteResult.Error -> setNewViewState(NoteDetailsViewState(err = noteResult.err))
         }
     }
 
@@ -34,18 +28,16 @@ class NoteDetailsViewModel(
         else notesRepository.getNoteById(id).observeForever(observer)
     }
 
-    fun onTextChangeTitle(title: CharSequence) {
-        note = note?.copy(title = title.toString())
+    fun onTextChangeTitle(title: String) {
+        note = note?.copy(title = title)
     }
 
-    fun onTextChangeText(text: CharSequence) {
-        note = note?.copy(text = text.toString())
+    fun onTextChangeText(text: String) {
+        note = note?.copy(text = text)
     }
 
-    fun getViewState(): LiveData<BaseViewState<Note?>> = _viewState
-
-    private fun setNewViewState(viewState: BaseViewState<Note?>) {
-        _viewState.value = viewState
+    private fun setNewViewState(viewState: NoteDetailsViewState) {
+        this.viewState.value = viewState
     }
 
     override fun onCleared() {

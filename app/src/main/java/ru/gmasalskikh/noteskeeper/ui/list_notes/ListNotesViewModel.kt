@@ -3,21 +3,16 @@ package ru.gmasalskikh.noteskeeper.ui.list_notes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.model.NoteResult
-import ru.gmasalskikh.noteskeeper.ui.BaseViewState
+import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
 
-class ListNotesViewModel(private val notesRepository: NotesRepository) : ViewModel() {
+class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseViewModel<List<Note>?, ListNotesViewState>() {
 
     private val _selectNote = MutableLiveData<Note?>()
     val selectNote: LiveData<Note?>
         get() = _selectNote
-
-    private val _viewState = MutableLiveData<BaseViewState<List<Note>?>>()
-    val viewState: LiveData<BaseViewState<List<Note>?>>
-        get() = _viewState
 
     private val observer = Observer<NoteResult> {
         when(it){
@@ -33,8 +28,8 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : ViewMod
         _selectNote.value = null
     }
 
-    private fun setNewViewState(viewState: BaseViewState<List<Note>?>) {
-        _viewState.value = viewState
+    private fun setNewViewState(viewState: ListNotesViewState) {
+        this.viewState.value = viewState
     }
 
     override fun onCleared() {

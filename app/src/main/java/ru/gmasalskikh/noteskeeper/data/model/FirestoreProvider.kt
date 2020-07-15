@@ -21,6 +21,7 @@ class FirestoreProvider(private val store: FirebaseFirestore) : INotesProvider {
         notesReference.addSnapshotListener { snapshot, err ->
             snapshot?.run {
                 documents.map { doc -> doc.toObject(Note::class.java) }
+                    .sortedBy { it?.lastChanged }
                     .let { listNotesLiveData.value = NoteResult.Success(it) }
             } ?: err?.let { listNotesLiveData.value = NoteResult.Error(it) }
         }

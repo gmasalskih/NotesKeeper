@@ -15,8 +15,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
-import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ListNotesFragmentBinding
 import timber.log.Timber
 
@@ -33,7 +31,7 @@ class ListNotesFragment : Fragment() {
     ): View? {
         binding = ListNotesFragmentBinding.inflate(inflater, container, false)
         adapter = ListNotesAdapter(
-            ListNotesAdapter.NoteClickListener { note: Note ->
+            ListNotesAdapter.NoteClickListener { note ->
                 viewModel.onClickNote(note)
             }
         )
@@ -49,25 +47,26 @@ class ListNotesFragment : Fragment() {
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
-        val appBarConfiguration= AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
+        val appBarConfiguration =
+            AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         initObserveViewModel()
     }
 
     private fun initObserveViewModel() {
         binding.fab.setOnClickListener {
-            val action = ListNotesFragmentDirections.actionListNotesFragmentToNoteDetailsFragment(null)
+            val action =
+                ListNotesFragmentDirections.actionListNotesFragmentToNoteDetailsFragment(null)
             navController.navigate(action)
         }
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            viewState.data?.let {
-                adapter.submitList(it)
-            }
+            viewState.data?.let { list -> adapter.submitList(list) }
         })
-        viewModel.selectNote.observe(viewLifecycleOwner, Observer { note: Note? ->
-            if (note != null){
+        viewModel.selectNote.observe(viewLifecycleOwner, Observer { note ->
+            if (note != null) {
                 Timber.i("--- $note")
-                val action = ListNotesFragmentDirections.actionListNotesFragmentToNoteDetailsFragment(note.id)
+                val action =
+                    ListNotesFragmentDirections.actionListNotesFragmentToNoteDetailsFragment(note.id)
                 navController.navigate(action)
             }
         })

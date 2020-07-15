@@ -2,5 +2,7 @@
     <string name="app_name">NotesKeeper</string>
     <string name="list_notes">List Notes</string>
     <string name="note_title">Title</string>
+
     <string name="save">Save</string>
+    <string name="note_text">Text</string>
 </resources>
