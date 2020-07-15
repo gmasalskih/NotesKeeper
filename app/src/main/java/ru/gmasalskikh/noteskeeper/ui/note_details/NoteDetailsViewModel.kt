@@ -11,26 +11,26 @@ import ru.gmasalskikh.noteskeeper.ui.BaseViewState
 
 class NoteDetailsViewModel(
     private val notesRepository: NotesRepository,
-    private val id: String?
+    id: String?
 ) : ViewModel() {
 
-    private var note: Note? = Note()
+    private var note: Note? = null
     private val _viewState = MutableLiveData<BaseViewState<Note?>>()
     private val observer = Observer<NoteResult> { noteResult ->
         when (noteResult) {
             is NoteResult.Success<*> -> {
-                note = noteResult.data as? Note
+                (noteResult.data as? Note)?.let { note = it }
                 setNewViewState(NoteDetailsViewState(data = note))
             }
             is NoteResult.Error -> {
-                note = null
                 setNewViewState(NoteDetailsViewState(err = noteResult.err))
             }
         }
     }
 
     init {
-        if (id.isNullOrEmpty()) _viewState.value = NoteDetailsViewState(data = Note())
+        if (id.isNullOrEmpty())
+            setNewViewState(NoteDetailsViewState(data = Note().also { note = it }))
         else notesRepository.getNoteById(id).observeForever(observer)
     }
 

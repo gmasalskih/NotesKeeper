@@ -43,7 +43,7 @@ class NoteDetailsFragment : Fragment() {
         initObservers()
     }
 
-    fun initObservers() {
+    private fun initObservers() {
         viewModel.getViewState().observe(viewLifecycleOwner, Observer { viewState ->
             viewState.data?.let { note ->
                 binding.noteTitle.setText(note.title)
