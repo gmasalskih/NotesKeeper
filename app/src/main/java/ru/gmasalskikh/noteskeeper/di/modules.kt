@@ -16,14 +16,9 @@ val providersModule = module {
 }
 
 val listNotesModule = module {
-    viewModel { ListNotesViewModel(get()) }
+    viewModel { ListNotesViewModel(notesRepository = get()) }
 }
 
 val noteDetailsModule = module {
-    viewModel { (id: String?) ->
-        NoteDetailsViewModel(
-            notesRepository = get(),
-            id = id
-        )
-    }
+    viewModel { (id: String?) -> NoteDetailsViewModel(notesRepository = get(), id = id) }
 }

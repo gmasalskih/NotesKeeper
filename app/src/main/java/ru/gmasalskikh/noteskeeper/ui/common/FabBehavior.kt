@@ -52,5 +52,4 @@ class FabBehavior(context: Context, attributeSet: AttributeSet) : FloatingAction
             child.show()
         }
     }
-
 }

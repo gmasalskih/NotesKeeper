@@ -5,6 +5,7 @@ import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.model.NoteResult
 import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
+import java.util.*
 
 class NoteDetailsViewModel(
     private val notesRepository: NotesRepository,
@@ -29,19 +30,23 @@ class NoteDetailsViewModel(
     }
 
     fun onTextChangeTitle(title: String) {
-        note = note?.copy(title = title)
+        note = note?.copy(title = title, lastChanged = Date())
     }
 
     fun onTextChangeText(text: String) {
-        note = note?.copy(text = text)
+        note = note?.copy(text = text, lastChanged = Date())
     }
 
     private fun setNewViewState(viewState: NoteDetailsViewState) {
+        viewState.data?.let { notesRepository.saveNote(it) }
         this.viewState.value = viewState
     }
 
+    fun saveChanges(){
+        setNewViewState(NoteDetailsViewState(data = note))
+    }
+
     override fun onCleared() {
-        note?.let { notesRepository.saveNote(it) }
         notesRepository.getNotes().removeObserver(observer)
     }
 }

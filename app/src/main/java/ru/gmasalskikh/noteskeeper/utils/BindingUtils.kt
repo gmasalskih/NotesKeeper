@@ -30,6 +30,13 @@ fun TextView.setNoteText(item: Note?) {
     }
 }
 
+@BindingAdapter("BA_textView_set_date")
+fun TextView.setNoteDate(item: Note?) {
+    item?.let { note: Note ->
+        text = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault()).format(note.lastChanged)
+    }
+}
+
 @BindingAdapter("BA_toolbar_set_background_color")
 fun Toolbar.setToolBarBackgroundColor(item: Note?) {
     item?.let { note: Note ->

@@ -20,8 +20,13 @@ class FirestoreProvider(private val store: FirebaseFirestore) : INotesProvider {
     override fun subscribeToAllNotes(): LiveData<NoteResult> {
         notesReference.addSnapshotListener { snapshot, err ->
             snapshot?.run {
-                documents.map { doc -> doc.toObject(Note::class.java) }
-                    .sortedBy { it?.lastChanged }
+                documents.asSequence()
+                    .map { doc -> doc.toObject(Note::class.java) }
+                    .toList()
+                    .filterNotNull()
+                    .toSortedSet()
+                    .reversed()
+                    .toList()
                     .let { listNotesLiveData.value = NoteResult.Success(it) }
             } ?: err?.let { listNotesLiveData.value = NoteResult.Error(it) }
         }

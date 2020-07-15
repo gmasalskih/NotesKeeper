@@ -29,6 +29,7 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
     }
 
     private fun setNewViewState(viewState: ListNotesViewState) {
+
         this.viewState.value = viewState
     }
 

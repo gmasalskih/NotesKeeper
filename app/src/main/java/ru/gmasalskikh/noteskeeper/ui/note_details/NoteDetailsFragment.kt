@@ -1,28 +1,31 @@
 package ru.gmasalskikh.noteskeeper.ui.note_details
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
+import ru.gmasalskikh.noteskeeper.ui.BaseFragment
+import java.text.SimpleDateFormat
+import java.util.*
 
-class NoteDetailsFragment : Fragment() {
+class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
 
     private lateinit var binding: NoteDetailsFragmentBinding
-    private lateinit var navController: NavController
     private lateinit var args: NoteDetailsFragmentArgs
-    private val viewModel: NoteDetailsViewModel by viewModel { parametersOf(args.id) }
+    override val viewModel: NoteDetailsViewModel by viewModel { parametersOf(args.id) }
+    override lateinit var toolbar: Toolbar
+
+    companion object {
+        private const val DATE_TIME_FORMAT = "HH:mm dd.MM.yyyy"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,33 +34,31 @@ class NoteDetailsFragment : Fragment() {
         binding = NoteDetailsFragmentBinding.inflate(inflater, container, false)
         args = NoteDetailsFragmentArgs.fromBundle(requireArguments())
         binding.lifecycleOwner = this
+        toolbar = binding.toolbar
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        navController = view.findNavController()
-        val appBarConfiguration =
-            AppBarConfiguration(navController.graph, drawerLayout = requireActivity().drawerLayout)
-        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-        initState()
-    }
-
-    private fun initState() {
+    override fun initState() {
+        super.initState()
         binding.noteTitle.addTextChangedListener { viewModel.onTextChangeTitle(it.toString()) }
         binding.noteText.addTextChangedListener { viewModel.onTextChangeText(it.toString()) }
-        viewModel.getViewState().observe(viewLifecycleOwner, Observer { viewState ->
-            viewState.data?.let { note ->
-                binding.noteTitle.setText(note.title)
-                binding.noteText.setText(note.text)
-                binding.toolbar.setBackgroundColor(
-                    ResourcesCompat.getColor(
-                        resources,
-                        note.color,
-                        null
-                    )
-                )
-            }
-        })
+    }
+
+    override fun renderData(data: Note?) {
+        if (data == null) return
+        binding.noteTitle.setText(data.title)
+        binding.noteText.setText(data.text)
+        binding.toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, data.color, null))
+        binding.toolbar.title =
+            SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(data.lastChanged)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveChanges()
+    }
+
+    override fun renderErr(err: Throwable) {
+        Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
     }
 }

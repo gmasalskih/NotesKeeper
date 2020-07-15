@@ -17,8 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{()->clickListener.onClick(note)}"
-        app:BA_cardView_set_background_color="@{note}"
-        android:layout_margin="4dp">
+        android:layout_margin="4dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
+        app:BA_cardView_set_background_color="@{note}">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,21 +29,35 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:BA_textView_set_title="@{note}"
-            tools:text="Very important note"/>
+            tools:text="Very important note" />
 
         <TextView
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:textSize="14sp"
             app:BA_textView_set_text="@{note}"
-            tools:text="My very important note text with very important information"/>
+            tools:text="My very important note text with very important information" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            BA_textView_set_date="@{note}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:gravity="end"
+            android:textSize="12sp"
+            tools:text="01.01.2020 00:00"/>
 
     </LinearLayout>
     </androidx.cardview.widget.CardView>
