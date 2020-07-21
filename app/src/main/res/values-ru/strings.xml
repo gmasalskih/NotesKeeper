@@ -5,4 +5,5 @@
     <string name="note_title">Заголовок</string>
     <string name="save">Сохранить</string>
     <string name="note_text">Текст</string>
+    <string name="log_out">Выйти</string>
 </resources>

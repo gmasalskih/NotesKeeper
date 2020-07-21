@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.android.synthetic.main.nav_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ListNotesFragmentBinding

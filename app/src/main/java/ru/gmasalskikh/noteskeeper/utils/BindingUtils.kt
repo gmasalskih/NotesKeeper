@@ -12,7 +12,7 @@ import java.util.*
 @BindingAdapter("BA_cardView_set_background_color")
 fun CardView.setNoteBackgroundColor(item: Note?) {
     item?.let { note: Note ->
-        setBackgroundColor(ResourcesCompat.getColor(resources, note.color, null))
+        setBackgroundColor(note.color)
     }
 }
 

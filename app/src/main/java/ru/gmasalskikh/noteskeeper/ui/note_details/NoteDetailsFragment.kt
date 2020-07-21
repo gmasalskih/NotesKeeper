@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,8 +14,7 @@ import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
 import ru.gmasalskikh.noteskeeper.ui.BaseFragment
-import java.text.SimpleDateFormat
-import java.util.*
+import ru.gmasalskikh.noteskeeper.utils.format
 
 class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
 
@@ -22,10 +22,6 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
     private lateinit var args: NoteDetailsFragmentArgs
     override val viewModel: NoteDetailsViewModel by viewModel { parametersOf(args.id) }
     override lateinit var toolbar: Toolbar
-
-    companion object {
-        private const val DATE_TIME_FORMAT = "HH:mm dd.MM.yyyy"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,9 +44,9 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
         if (data == null) return
         binding.noteTitle.setText(data.title)
         binding.noteText.setText(data.text)
-        binding.toolbar.setBackgroundColor(ResourcesCompat.getColor(resources, data.color, null))
-        binding.toolbar.title =
-            SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(data.lastChanged)
+        binding.toolbar.setBackgroundColor(data.color)
+        binding.toolbar.title = data.lastChanged.format()
+
     }
 
     override fun onPause() {

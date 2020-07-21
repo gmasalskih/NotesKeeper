@@ -8,5 +8,9 @@
             android:id="@+id/listNotesFragment"
             android:icon="@drawable/ic_launcher_background"
             android:title="@string/list_notes"/>
+        <item
+            android:id="@+id/logOut"
+            android:icon="@drawable/ic_log_out2"
+            android:title="@string/log_out"/>
     </group>
 </menu>
