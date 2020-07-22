@@ -7,6 +7,7 @@ import org.koin.core.context.startKoin
 import ru.gmasalskikh.noteskeeper.di.providersModule
 import ru.gmasalskikh.noteskeeper.di.listNotesModule
 import ru.gmasalskikh.noteskeeper.di.noteDetailsModule
+import ru.gmasalskikh.noteskeeper.di.presentersModule
 import timber.log.Timber
 
 class NotesKeeperApp : Application() {
@@ -18,6 +19,7 @@ class NotesKeeperApp : Application() {
             androidContext(this@NotesKeeperApp)
             modules(
                 providersModule,
+                presentersModule,
                 listNotesModule,
                 noteDetailsModule
             )

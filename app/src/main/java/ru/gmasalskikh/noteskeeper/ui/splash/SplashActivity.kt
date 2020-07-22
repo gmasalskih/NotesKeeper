@@ -3,18 +3,15 @@ package ru.gmasalskikh.noteskeeper.ui.splash
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import com.firebase.ui.auth.AuthUI
 import org.koin.android.ext.android.inject
-import ru.gmasalskikh.noteskeeper.R
-import ru.gmasalskikh.noteskeeper.data.NotesRepository
+import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.ui.main.MainActivity
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity(), SplashView {
 
-    private val authUI: AuthUI by inject()
-    private val notesRepository: NotesRepository by inject()
+    private val presenter: SplashPresenter by inject { parametersOf(this) }
 
     companion object {
         private const val RC_SIGN_IN = 0
@@ -23,36 +20,25 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        notesRepository.getCurrentUser().observe(this, Observer { user ->
-            user?.let { startMainActivity() } ?: startLoginActivity()
-        })
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) presenter.initState()
     }
 
-    private fun startLoginActivity() {
-        startActivityForResult(
-            authUI.createSignInIntentBuilder()
-                .setLogo(R.drawable.android_robot)
-                .setTheme(R.style.LoginStyle)
-                .setAvailableProviders(listOf(AuthUI.IdpConfig.GoogleBuilder().build()))
-                .build(),
-            RC_SIGN_IN
-        )
+    override fun onPause() {
+        super.onPause()
+        presenter.onCleared()
     }
 
-    private fun startMainActivity() {
-        startActivity(MainActivity.getIntent(this))
-    }
+    override fun startLoginActivity(intent: Intent) = startActivityForResult(intent, RC_SIGN_IN)
+
+    override fun startMainActivity() = startActivity(MainActivity.getIntent(this))
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
-            if (resultCode == Activity.RESULT_OK) {
-                startMainActivity()
-            } else {
-                finish()
-            }
+            if (resultCode == Activity.RESULT_OK) startMainActivity()
+            else finish()
         }
     }
 }

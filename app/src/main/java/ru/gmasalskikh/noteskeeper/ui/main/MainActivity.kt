@@ -24,11 +24,11 @@ class MainActivity : AppCompatActivity(), MainView {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    private val presenter: MainPresenter by inject { parametersOf(this) }
     private lateinit var navView: View
     private lateinit var userAvatar: ImageView
     private lateinit var userName: TextView
     private lateinit var userEmail: TextView
+    private val presenter: MainPresenter by inject { parametersOf(this) }
 
     companion object {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java).apply {
@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity(), MainView {
         userAvatar = navView.findViewById(R.id.avatar)
         userName = navView.findViewById(R.id.user_name)
         userEmail = navView.findViewById(R.id.user_email)
-        presenter.initViewState()
         binding.navMenu.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.logOut -> {
@@ -57,10 +56,14 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    override fun onPause() {
-        presenter.onCleared()
-        super.onPause()
+    override fun onResume() {
+        super.onResume()
+        presenter.initViewState()
+    }
 
+    override fun onPause() {
+        super.onPause()
+        presenter.onCleared()
     }
 
     override fun renderViewState(viewState: BaseViewState<User?>) {
@@ -79,5 +82,4 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun navigateToSplashActivity() {
         startActivity(SplashActivity.getIntent(this))
     }
-
 }

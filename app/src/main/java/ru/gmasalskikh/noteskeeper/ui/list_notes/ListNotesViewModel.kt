@@ -21,7 +21,9 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
         }
     }
 
-    init { notesRepository.getNotes().observeForever (observer) }
+    init {
+        notesRepository.getNotes().observeForever (observer)
+    }
 
     fun onClickNote(note: Note) {
         _selectNote.value = note
@@ -29,7 +31,6 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
     }
 
     private fun setNewViewState(viewState: ListNotesViewState) {
-
         this.viewState.value = viewState
     }
 

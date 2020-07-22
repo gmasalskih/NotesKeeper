@@ -10,6 +10,7 @@ data class Note(
     val color: Int = ColorProvider.getRandomColor(),
     val lastChanged: Date = Date()
 ) : Comparable<Note> {
+    
     override fun equals(other: Any?) = when {
         this === other -> true
         other is Note -> id == other.id

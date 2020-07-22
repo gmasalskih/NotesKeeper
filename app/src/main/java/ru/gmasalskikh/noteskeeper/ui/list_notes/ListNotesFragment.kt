@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.nav_header.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ListNotesFragmentBinding
@@ -18,8 +17,8 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
 
     private lateinit var binding: ListNotesFragmentBinding
     private lateinit var adapter: ListNotesAdapter
-    override val viewModel: ListNotesViewModel by viewModel()
     override lateinit var toolbar: Toolbar
+    override val viewModel: ListNotesViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,9 +26,7 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
     ): View? {
         binding = ListNotesFragmentBinding.inflate(inflater, container, false)
         adapter = ListNotesAdapter(
-            ListNotesAdapter.NoteClickListener { note ->
-                viewModel.onClickNote(note)
-            }
+            ListNotesAdapter.NoteClickListener { note -> viewModel.onClickNote(note) }
         )
         toolbar = binding.toolbar
         binding.lifecycleOwner = this
@@ -46,9 +43,7 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
         })
     }
 
-    override fun renderData(data: List<Note>?) {
-        adapter.submitList(data)
-    }
+    override fun renderData(data: List<Note>?) = adapter.submitList(data)
 
     override fun renderErr(err: Throwable) {
         adapter.submitList(null)

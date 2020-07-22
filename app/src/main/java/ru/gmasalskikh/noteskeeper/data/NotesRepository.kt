@@ -9,4 +9,3 @@ class NotesRepository(private val provider: INotesProvider) {
     fun getCurrentUser() = provider.getCurrentUser()
     fun userLogOut() = provider.userLogOut()
 }
-

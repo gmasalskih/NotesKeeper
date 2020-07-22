@@ -15,6 +15,9 @@ import ru.gmasalskikh.noteskeeper.ui.main.MainActivityPresenter
 import ru.gmasalskikh.noteskeeper.ui.main.MainPresenter
 import ru.gmasalskikh.noteskeeper.ui.main.MainView
 import ru.gmasalskikh.noteskeeper.ui.note_details.NoteDetailsViewModel
+import ru.gmasalskikh.noteskeeper.ui.splash.SplashActivityPresenter
+import ru.gmasalskikh.noteskeeper.ui.splash.SplashPresenter
+import ru.gmasalskikh.noteskeeper.ui.splash.SplashView
 
 val providersModule = module {
     single { FirebaseFirestore.getInstance() }
@@ -23,12 +26,22 @@ val providersModule = module {
     single { NotesRepository(get()) }
     single { ColorRepository(androidContext()) }
     single { AuthUI.getInstance() }
+}
+
+val presentersModule = module {
     factory<MainPresenter> { (activity: MainView) ->
         MainActivityPresenter(
             activity = activity,
             notesRepository = get(),
-            auth = get(),
             authUI = get()
+        )
+    }
+
+    factory<SplashPresenter> { (activity: SplashView) ->
+        SplashActivityPresenter(
+            activity = activity,
+            authUI = get(),
+            auth = get()
         )
     }
 }

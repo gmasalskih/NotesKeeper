@@ -46,7 +46,6 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
         binding.noteText.setText(data.text)
         binding.toolbar.setBackgroundColor(data.color)
         binding.toolbar.title = data.lastChanged.format()
-
     }
 
     override fun onPause() {

@@ -1,32 +1,22 @@
 package ru.gmasalskikh.noteskeeper.ui.main
 
 import android.app.Activity
+import androidx.lifecycle.Observer
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.FirebaseAuth
 import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.entity.User
-import timber.log.Timber
 
 class MainActivityPresenter(
     private var activity: MainView?,
     private val notesRepository: NotesRepository,
-    private val auth: FirebaseAuth,
     private val authUI: AuthUI
 ) : MainPresenter {
-    override fun initViewState() {
-        Timber.i("--- initViewState")
-        auth.currentUser?.let {
-            activity?.renderViewState(
-                MainActivityViewSate(
-                    data = User(
-                        name = it.displayName ?: "",
-                        email = it.email ?: "",
-                        avatarUri = it.photoUrl?.toString() ?: ""
-                    )
-                )
-            )
-        }
+
+    private val observer = Observer<User?> { user ->
+        user?.let { activity?.renderViewState(MainActivityViewSate(data = user)) } ?: logOut()
     }
+
+    override fun initViewState() = notesRepository.getCurrentUser().observeForever(observer)
 
     override fun logOut() {
         activity?.let {
@@ -40,6 +30,7 @@ class MainActivityPresenter(
     }
 
     override fun onCleared() {
+        notesRepository.getCurrentUser().removeObserver(observer)
         activity = null
     }
 }

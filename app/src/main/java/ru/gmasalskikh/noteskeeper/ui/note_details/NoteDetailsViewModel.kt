@@ -24,8 +24,7 @@ class NoteDetailsViewModel(
     }
 
     init {
-        if (id.isNullOrEmpty())
-            setNewViewState(NoteDetailsViewState(data = Note().also { note = it }))
+        if (id.isNullOrEmpty()) setNewViewState(NoteDetailsViewState(data = Note().also { note = it }))
         else notesRepository.getNoteById(id).observeForever(observer)
     }
 
