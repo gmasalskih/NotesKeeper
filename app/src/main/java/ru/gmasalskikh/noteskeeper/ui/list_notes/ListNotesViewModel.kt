@@ -19,12 +19,12 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
     val delNote: LiveData<Note?>
         get() = _delNote
 
-    private val _delNoteMsg = MutableLiveData<String>()
-    val delNoteMsg: LiveData<String>
+    private val _delNoteMsg = MutableLiveData<String?>()
+    val delNoteMsg: LiveData<String?>
         get() = _delNoteMsg
 
-    private val _delNoteErr = MutableLiveData<String>()
-    val delNoteErr: LiveData<String>
+    private val _delNoteErr = MutableLiveData<String?>()
+    val delNoteErr: LiveData<String?>
         get() = _delNoteErr
 
     private val observer = Observer<NoteResult> {
@@ -50,8 +50,14 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
 
     fun delNote(note: Note)= notesRepository.delNoteById(note.id).observeOnce {
         when(it){
-            is NoteResult.Success<*> -> _delNoteMsg.value = note.title
-            is NoteResult.Error -> _delNoteErr.value = it.err.message
+            is NoteResult.Success<*> -> {
+                _delNoteMsg.value = note.title
+                _delNoteMsg.value = null
+            }
+            is NoteResult.Error -> {
+                _delNoteErr.value = it.err.message
+                _delNoteErr.value = null
+            }
         }
     }
 

@@ -47,13 +47,13 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
             if (note != null) navigateToNoteDetails(note.id)
         })
         viewModel.delNote.observe(viewLifecycleOwner, Observer { note ->
-            note?.let {createAlertDialog(note).show() }
+            note?.let { createAlertDialog(note).show() }
         })
-        viewModel.delNoteMsg.observe(viewLifecycleOwner, Observer {
-            "$it ${getText(R.string.note_was_deleted)}".toToast(requireContext())
+        viewModel.delNoteMsg.observe(viewLifecycleOwner, Observer { msg ->
+            msg?.let { "$it ${getText(R.string.note_was_deleted)}".toToast(requireContext()) }
         })
-        viewModel.delNoteErr.observe(viewLifecycleOwner, Observer {
-            it.toToast(requireContext())
+        viewModel.delNoteErr.observe(viewLifecycleOwner, Observer { err ->
+            err?.let { it.toToast(requireContext()) }
         })
     }
 
