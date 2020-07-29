@@ -53,7 +53,7 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
             msg?.let { "$it ${getText(R.string.note_was_deleted)}".toToast(requireContext()) }
         })
         viewModel.delNoteErr.observe(viewLifecycleOwner, Observer { err ->
-            err?.let { it.toToast(requireContext()) }
+            err?.toToast(requireContext())
         })
     }
 
