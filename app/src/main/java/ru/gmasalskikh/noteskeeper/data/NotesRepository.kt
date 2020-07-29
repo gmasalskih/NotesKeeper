@@ -7,5 +7,6 @@ class NotesRepository(private val provider: INotesProvider) {
     fun getNoteById(id: String) = provider.getNoteById(id)
     fun saveNote(note: Note) = provider.saveNote(note)
     fun getCurrentUser() = provider.getCurrentUser()
-    fun userLogOut() = provider.userLogOut()
+    fun delNoteById(id: String) = provider.delNoteById(id)
+    fun signOut() = provider.signOut()
 }

@@ -39,5 +39,4 @@ abstract class BaseFragment<T, S : BaseViewState<T>> : Fragment() {
 
     abstract fun renderData(data: T)
     abstract fun renderErr(err: Throwable)
-
 }

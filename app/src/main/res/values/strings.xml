@@ -6,4 +6,10 @@
     <string name="save">Save</string>
     <string name="note_text">Text</string>
     <string name="log_out">Log out</string>
+    <string name="sign_in_warning">You have to sign in</string>
+    <string name="del_note_alert_title">Delete note</string>
+    <string name="del_note_alert_text">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="note_was_deleted">note was deleted</string>
 </resources>

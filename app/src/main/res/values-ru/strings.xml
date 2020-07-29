@@ -6,4 +6,10 @@
     <string name="save">Сохранить</string>
     <string name="note_text">Текст</string>
     <string name="log_out">Выйти</string>
+    <string name="sign_in_warning">Вам необходимо авторизоваться</string>
+    <string name="del_note_alert_title">Удалить заметку</string>
+    <string name="del_note_alert_text">Вы уверены?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="note_was_deleted">заметка была удалена</string>
 </resources>

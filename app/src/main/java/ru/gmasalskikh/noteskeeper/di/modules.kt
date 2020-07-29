@@ -11,39 +11,40 @@ import ru.gmasalskikh.noteskeeper.data.INotesProvider
 import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.model.FirestoreProvider
 import ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesViewModel
-import ru.gmasalskikh.noteskeeper.ui.main.MainActivityPresenter
-import ru.gmasalskikh.noteskeeper.ui.main.MainPresenter
-import ru.gmasalskikh.noteskeeper.ui.main.MainView
+import ru.gmasalskikh.noteskeeper.ui.main.MainActivityViewModel
 import ru.gmasalskikh.noteskeeper.ui.note_details.NoteDetailsViewModel
-import ru.gmasalskikh.noteskeeper.ui.splash.SplashActivityPresenter
-import ru.gmasalskikh.noteskeeper.ui.splash.SplashPresenter
-import ru.gmasalskikh.noteskeeper.ui.splash.SplashView
+import ru.gmasalskikh.noteskeeper.ui.splash.SplashActivityViewModel
 
 val providersModule = module {
     single { FirebaseFirestore.getInstance() }
     single { FirebaseAuth.getInstance() }
-    single<INotesProvider> { FirestoreProvider(get(), get()) }
+    single<INotesProvider> {
+        FirestoreProvider(
+            store = get(),
+            auth = get(),
+            authUI = get(),
+            context = androidContext()
+        )
+    }
     single { NotesRepository(get()) }
     single { ColorRepository(androidContext()) }
     single { AuthUI.getInstance() }
+    factory { (drawable: Int, style: Int) ->
+        AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setLogo(drawable)
+            .setTheme(style)
+            .setAvailableProviders(listOf(AuthUI.IdpConfig.GoogleBuilder().build()))
+            .build()
+    }
 }
 
-val presentersModule = module {
-    factory<MainPresenter> { (activity: MainView) ->
-        MainActivityPresenter(
-            activity = activity,
-            notesRepository = get(),
-            authUI = get()
-        )
-    }
+val mainModule = module {
+    viewModel { MainActivityViewModel(notesRepository = get()) }
+}
 
-    factory<SplashPresenter> { (activity: SplashView) ->
-        SplashActivityPresenter(
-            activity = activity,
-            authUI = get(),
-            auth = get()
-        )
-    }
+val splashModule = module {
+    viewModel { SplashActivityViewModel(notesRepository = get()) }
 }
 
 val listNotesModule = module {

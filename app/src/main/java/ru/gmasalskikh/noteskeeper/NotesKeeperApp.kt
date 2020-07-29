@@ -4,10 +4,7 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import ru.gmasalskikh.noteskeeper.di.providersModule
-import ru.gmasalskikh.noteskeeper.di.listNotesModule
-import ru.gmasalskikh.noteskeeper.di.noteDetailsModule
-import ru.gmasalskikh.noteskeeper.di.presentersModule
+import ru.gmasalskikh.noteskeeper.di.*
 import timber.log.Timber
 
 class NotesKeeperApp : Application() {
@@ -19,7 +16,8 @@ class NotesKeeperApp : Application() {
             androidContext(this@NotesKeeperApp)
             modules(
                 providersModule,
-                presentersModule,
+                mainModule,
+                splashModule,
                 listNotesModule,
                 noteDetailsModule
             )

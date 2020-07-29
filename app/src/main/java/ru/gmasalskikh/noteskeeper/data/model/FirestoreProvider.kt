@@ -1,18 +1,21 @@
 package ru.gmasalskikh.noteskeeper.data.model
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import ru.gmasalskikh.noteskeeper.data.INotesProvider
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.utils.toUser
-import timber.log.Timber
 
 class FirestoreProvider(
     private val store: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val authUI: AuthUI,
+    private val context: Context
 ) : INotesProvider {
 
     companion object {
@@ -25,12 +28,17 @@ class FirestoreProvider(
     private val lastSaveNoteLiveData = MutableLiveData<NoteResult>()
     private val currentUserLiveData = MutableLiveData<User?>()
 
-    override fun userLogOut() {
-        currentUserLiveData.value = null
+    override fun signOut() {
+        authUI.signOut(context).addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                currentUserLiveData.value = null
+            }
+        }
     }
 
     override fun getCurrentUser(): LiveData<User?> {
-        auth.currentUser?.let { currentUserLiveData.value = it.toUser() } ?: userLogOut()
+        auth.currentUser?.let {
+            currentUserLiveData.value = it.toUser() } ?: signOut()
         return currentUserLiveData
     }
 
@@ -51,7 +59,6 @@ class FirestoreProvider(
                         .toList()
                         .let { listNotesLiveData.value = NoteResult.Success(it) }
                 } ?: err?.let {
-                    Timber.i("--- initViewState $it")
                     listNotesLiveData.value = NoteResult.Error(it)
                 }
             }
@@ -67,6 +74,15 @@ class FirestoreProvider(
                 lastRetrieveNoteLiveData.value = NoteResult.Error(it)
             }
         return lastRetrieveNoteLiveData
+    }
+
+    override fun delNoteById(id: String): LiveData<NoteResult> = MutableLiveData<NoteResult>().apply {
+        getUserNotesCollection()?.document(id)?.delete()
+            ?.addOnSuccessListener {
+                value = NoteResult.Success(null)
+            }?.addOnFailureListener {
+                value = NoteResult.Error(it)
+            }
     }
 
     override fun saveNote(note: Note): LiveData<NoteResult> {

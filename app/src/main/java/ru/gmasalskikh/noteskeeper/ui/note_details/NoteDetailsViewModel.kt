@@ -24,7 +24,9 @@ class NoteDetailsViewModel(
     }
 
     init {
-        if (id.isNullOrEmpty()) setNewViewState(NoteDetailsViewState(data = Note().also { note = it }))
+        if (id.isNullOrEmpty()) setNewViewState(NoteDetailsViewState(data = Note().also {
+            note = it
+        }))
         else notesRepository.getNoteById(id).observeForever(observer)
     }
 
@@ -37,13 +39,11 @@ class NoteDetailsViewModel(
     }
 
     private fun setNewViewState(viewState: NoteDetailsViewState) {
-        viewState.data?.let { notesRepository.saveNote(it) }
+        viewState.data?.let { if (!it.isEmpty()) notesRepository.saveNote(it) }
         this.viewState.value = viewState
     }
 
-    fun saveChanges(){
-        setNewViewState(NoteDetailsViewState(data = note))
-    }
+    fun saveChanges() = setNewViewState(NoteDetailsViewState(data = note))
 
     override fun onCleared() {
         notesRepository.getNotes().removeObserver(observer)

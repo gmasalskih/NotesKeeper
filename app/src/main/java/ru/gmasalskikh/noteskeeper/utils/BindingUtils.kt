@@ -5,7 +5,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
+import androidx.databinding.OnRebindCallback
 import ru.gmasalskikh.noteskeeper.data.entity.Note
+import ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -48,5 +50,13 @@ fun Toolbar.setToolBarBackgroundColor(item: Note?) {
 fun Toolbar.setToolbarTitle(item: Note?) {
     item?.let { note: Note ->
         title = SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault()).format(note.lastChanged)
+    }
+}
+
+@BindingAdapter(value = ["note", "longClickListener"], requireAll = false)
+fun CardView.setMyLongClickListener(note: Note, longClickListener: ListNotesAdapter.NoteLongClickListener) {
+    this.setOnLongClickListener {
+        longClickListener.longClickListener(note)
+        return@setOnLongClickListener true
     }
 }

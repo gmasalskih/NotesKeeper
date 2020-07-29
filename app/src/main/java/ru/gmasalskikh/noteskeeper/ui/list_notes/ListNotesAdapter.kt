@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.ItemNoteBinding
 
-class ListNotesAdapter(private val clickListener: NoteClickListener) :
+class ListNotesAdapter(private val clickListener: NoteClickListener, private val longClickListener: NoteLongClickListener) :
     ListAdapter<Note, ListNotesAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -16,17 +16,15 @@ class ListNotesAdapter(private val clickListener: NoteClickListener) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, longClickListener)
     }
 
     class ViewHolder private constructor(private val binding: ItemNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(
-            item: Note,
-            clickListener: NoteClickListener
-        ) {
+        fun bind(item: Note, clickListener: NoteClickListener, longClickListener: NoteLongClickListener) {
             binding.note = item
             binding.clickListener = clickListener
+            binding.longClickListener = longClickListener
         }
 
         companion object {
@@ -52,5 +50,8 @@ class ListNotesAdapter(private val clickListener: NoteClickListener) :
 
     class NoteClickListener(val clickListener: (note: Note) -> Unit) {
         fun onClick(note: Note) = clickListener(note)
+    }
+    class NoteLongClickListener(val longClickListener: (note: Note) -> Unit){
+        fun onLongClick(note: Note) = longClickListener(note)
     }
 }

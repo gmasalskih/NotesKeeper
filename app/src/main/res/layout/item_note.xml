@@ -11,12 +11,21 @@
         <variable
             name="clickListener"
             type="ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesAdapter.NoteClickListener" />
+
+        <variable
+            name="longClickListener"
+            type="ru.gmasalskikh.noteskeeper.ui.list_notes.ListNotesAdapter.NoteLongClickListener" />
+
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/item_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{()->clickListener.onClick(note)}"
+        android:longClickable="true"
+        app:note="@{note}"
+        app:longClickListener="@{longClickListener}"
         android:layout_margin="4dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp"

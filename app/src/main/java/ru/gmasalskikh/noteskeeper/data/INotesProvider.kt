@@ -8,7 +8,8 @@ import ru.gmasalskikh.noteskeeper.data.model.NoteResult
 interface INotesProvider {
     fun subscribeToAllNotes(): LiveData<NoteResult>
     fun getNoteById(id: String): LiveData<NoteResult>
+    fun delNoteById(id: String): LiveData<NoteResult>
     fun saveNote(note: Note): LiveData<NoteResult>
     fun getCurrentUser(): LiveData<User?>
-    fun userLogOut()
+    fun signOut()
 }

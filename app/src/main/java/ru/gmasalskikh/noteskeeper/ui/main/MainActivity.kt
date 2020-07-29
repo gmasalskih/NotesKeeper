@@ -6,21 +6,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.R
 import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.databinding.ActivityMainBinding
-import ru.gmasalskikh.noteskeeper.ui.BaseViewState
+import ru.gmasalskikh.noteskeeper.ui.BaseActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gmasalskikh.noteskeeper.ui.splash.SplashActivity
+import ru.gmasalskikh.noteskeeper.utils.circleImgFromUrl
 
-class MainActivity : AppCompatActivity(), MainView {
+class MainActivity : BaseActivity<User?, MainActivityViewSate>() {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -28,7 +26,7 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var userAvatar: ImageView
     private lateinit var userName: TextView
     private lateinit var userEmail: TextView
-    private val presenter: MainPresenter by inject { parametersOf(this) }
+    override val viewModel: MainActivityViewModel by viewModel()
 
     companion object {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java).apply {
@@ -45,10 +43,11 @@ class MainActivity : AppCompatActivity(), MainView {
         userAvatar = navView.findViewById(R.id.avatar)
         userName = navView.findViewById(R.id.user_name)
         userEmail = navView.findViewById(R.id.user_email)
+        viewModel.initViewState()
         binding.navMenu.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.logOut -> {
-                    presenter.logOut()
+                    viewModel.signOut()
                     true
                 }
                 else -> false
@@ -56,30 +55,25 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
+    private fun navigateToSplashActivity() {
+        viewModel.clearObserver()
+        startActivity(SplashActivity.getIntent(this))
+    }
+
     override fun onResume() {
         super.onResume()
-        presenter.initViewState()
+        super.initViewState()
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter.onCleared()
-    }
-
-    override fun renderViewState(viewState: BaseViewState<User?>) {
-        viewState.data?.let { user ->
-            userName.text = user.name
-            userEmail.text = user.email
-            Glide.with(this)
-                .load(user.avatarUri)
-                .placeholder(R.drawable.android_robot)
-                .error(R.drawable.android_robot)
-                .circleCrop()
-                .into(userAvatar)
+    override fun renderData(data: User?) {
+        data?.let {
+            userName.text = it.name
+            userEmail.text = it.email
+            userAvatar.circleImgFromUrl(this, it.avatarUri)
         }
     }
 
-    override fun navigateToSplashActivity() {
-        startActivity(SplashActivity.getIntent(this))
+    override fun renderErr(err: Throwable) {
+        navigateToSplashActivity()
     }
 }

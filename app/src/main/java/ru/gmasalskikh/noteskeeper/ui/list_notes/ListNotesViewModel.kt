@@ -7,12 +7,25 @@ import ru.gmasalskikh.noteskeeper.data.NotesRepository
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.model.NoteResult
 import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
+import ru.gmasalskikh.noteskeeper.utils.observeOnce
 
 class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseViewModel<List<Note>?, ListNotesViewState>() {
 
     private val _selectNote = MutableLiveData<Note?>()
     val selectNote: LiveData<Note?>
         get() = _selectNote
+
+    private val _delNote = MutableLiveData<Note?>()
+    val delNote: LiveData<Note?>
+        get() = _delNote
+
+    private val _delNoteMsg = MutableLiveData<String>()
+    val delNoteMsg: LiveData<String>
+        get() = _delNoteMsg
+
+    private val _delNoteErr = MutableLiveData<String>()
+    val delNoteErr: LiveData<String>
+        get() = _delNoteErr
 
     private val observer = Observer<NoteResult> {
         when(it){
@@ -29,6 +42,19 @@ class ListNotesViewModel(private val notesRepository: NotesRepository) : BaseVie
         _selectNote.value = note
         _selectNote.value = null
     }
+
+    fun onLongClickNote(note: Note){
+        _delNote.value = note
+        _delNote.value = null
+    }
+
+    fun delNote(note: Note)= notesRepository.delNoteById(note.id).observeOnce {
+        when(it){
+            is NoteResult.Success<*> -> _delNoteMsg.value = note.title
+            is NoteResult.Error -> _delNoteErr.value = it.err.message
+        }
+    }
+
 
     private fun setNewViewState(viewState: ListNotesViewState) {
         this.viewState.value = viewState

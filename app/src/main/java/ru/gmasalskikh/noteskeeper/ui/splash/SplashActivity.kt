@@ -4,14 +4,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import ru.gmasalskikh.noteskeeper.R
+import ru.gmasalskikh.noteskeeper.data.entity.User
+import ru.gmasalskikh.noteskeeper.ui.BaseActivity
 import ru.gmasalskikh.noteskeeper.ui.main.MainActivity
+import ru.gmasalskikh.noteskeeper.utils.toToast
+import timber.log.Timber
 
-class SplashActivity : AppCompatActivity(), SplashView {
+class SplashActivity : BaseActivity<User?, SplashViewState>() {
 
-    private val presenter: SplashPresenter by inject { parametersOf(this) }
+    override val viewModel: SplashActivityViewModel by viewModel()
+    private val signInIntent: Intent by inject {
+        parametersOf(
+            R.drawable.android_robot,
+            R.style.LoginStyle
+        )
+    }
 
     companion object {
         private const val RC_SIGN_IN = 0
@@ -22,17 +33,12 @@ class SplashActivity : AppCompatActivity(), SplashView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) presenter.initState()
+        if (savedInstanceState == null) viewModel.initState()
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter.onCleared()
-    }
+    private fun startLoginActivity() = startActivityForResult(signInIntent, RC_SIGN_IN)
 
-    override fun startLoginActivity(intent: Intent) = startActivityForResult(intent, RC_SIGN_IN)
-
-    override fun startMainActivity() = startActivity(MainActivity.getIntent(this))
+    private fun startMainActivity() = startActivity(MainActivity.getIntent(this))
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -40,5 +46,15 @@ class SplashActivity : AppCompatActivity(), SplashView {
             if (resultCode == Activity.RESULT_OK) startMainActivity()
             else finish()
         }
+    }
+
+    override fun renderData(data: User?){
+        data?.let { startMainActivity() } ?: startLoginActivity()
+    }
+
+    override fun renderErr(err: Throwable) {
+        Timber.i(err)
+        getText(R.string.sign_in_warning).toString().toToast(this)
+        startLoginActivity()
     }
 }
