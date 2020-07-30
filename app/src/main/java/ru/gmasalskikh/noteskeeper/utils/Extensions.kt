@@ -1,6 +1,7 @@
 package ru.gmasalskikh.noteskeeper.utils
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -41,3 +42,8 @@ fun ImageView.circleImgFromUrl(context: Context, url:String){
         .circleCrop()
         .into(this)
 }
+
+fun View.dip(value: Int): Int = (value * (resources?.displayMetrics?.density ?: 0f)).toInt()
+fun View.dip(value: Float): Int = (value * (resources?.displayMetrics?.density ?: 0f)).toInt()
+fun Context.dip(value: Int): Int = (value * (resources?.displayMetrics?.density ?: 0f)).toInt()
+fun Context.dip(value: Float): Int = (value * (resources?.displayMetrics?.density ?: 0f)).toInt()

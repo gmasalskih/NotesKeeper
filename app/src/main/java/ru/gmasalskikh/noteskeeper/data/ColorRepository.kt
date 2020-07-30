@@ -6,13 +6,16 @@ import ru.gmasalskikh.noteskeeper.R
 
 class ColorRepository(private val context: Context) {
 
-    private val listOfColors = listOf(
-        R.color.yellow,
-        R.color.green,
-        R.color.blue,
-        R.color.red,
-        R.color.violet
-    )
+    companion object{
+        val listOfColors = listOf(
+            R.color.yellow,
+            R.color.green,
+            R.color.blue,
+            R.color.red,
+            R.color.violet
+        )
+    }
+
 
     fun getRandomColor(): Int = ContextCompat.getColor(context, listOfColors.random())
 }

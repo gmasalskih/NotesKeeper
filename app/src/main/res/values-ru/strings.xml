@@ -12,4 +12,6 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="note_was_deleted">заметка была удалена</string>
+    <string name="note_change_color">Цвет</string>
+    <string name="note_delete">Удалить</string>
 </resources>
