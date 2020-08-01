@@ -17,16 +17,14 @@ class NoteDetailsViewModel(
         when (noteResult) {
             is NoteResult.Success<*> -> {
                 (noteResult.data as? Note)?.let { note = it }
-                setNewViewState(NoteDetailsViewState(data = note))
+                setNewViewState(data = note)
             }
-            is NoteResult.Error -> setNewViewState(NoteDetailsViewState(err = noteResult.err))
+            is NoteResult.Error -> setNewViewState(err = noteResult.err)
         }
     }
 
     init {
-        if (id.isNullOrEmpty()) setNewViewState(NoteDetailsViewState(data = Note().also {
-            note = it
-        }))
+        if (id.isNullOrEmpty()) setNewViewState(data = Note().also { note = it })
         else notesRepository.getNoteById(id).observeForever(observer)
     }
 
@@ -38,14 +36,22 @@ class NoteDetailsViewModel(
         note = note?.copy(text = text, lastChanged = Date())
     }
 
-    private fun setNewViewState(viewState: NoteDetailsViewState) {
-        viewState.data?.let { if (!it.isEmpty()) notesRepository.saveNote(it) }
-        this.viewState.value = viewState
+    fun onColorNoteChange(color: Int) {
+        note = note?.copy(color = color, lastChanged = Date())
+        setNewViewState(data = note)
     }
 
-    fun saveChanges() = setNewViewState(NoteDetailsViewState(data = note))
-
-    override fun onCleared() {
-        notesRepository.getNotes().removeObserver(observer)
+    private fun setNewViewState(data: Note? = null, err: Throwable? = null) {
+        this.viewState.value = NoteDetailsViewState(data = data, err = err)
     }
+
+    fun delNote() {
+        note?.let { notesRepository.delNoteById(it.id) }
+        note = Note()
+        setNewViewState(data = note)
+    }
+
+    fun saveChanges() = note?.let { if (!it.isEmpty()) notesRepository.saveNote(it) }
+
+    override fun onCleared() = notesRepository.getNotes().removeObserver(observer)
 }

@@ -26,17 +26,11 @@
                 android:layout_height="1dp"
                 android:background="@color/colorPrimaryDark" />
 
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
-
-                <ru.gmasalskikh.noteskeeper.ui.customviews.ColorPickerView
-                    android:id="@+id/colorPicker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"/>
-
-            </HorizontalScrollView>
+            <ru.gmasalskikh.noteskeeper.ui.customviews.ColorPickerView
+                android:id="@+id/colorPicker"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

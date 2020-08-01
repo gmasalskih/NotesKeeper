@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.widget.LinearLayout
 import androidx.annotation.Dimension
 import androidx.annotation.Dimension.DP
+import androidx.core.content.ContextCompat
 import ru.gmasalskikh.noteskeeper.data.ColorRepository
 import ru.gmasalskikh.noteskeeper.utils.dip
 import timber.log.Timber
@@ -63,7 +64,6 @@ class ColorPickerView : LinearLayout {
             : super(context, attrs, defStyleAttr) {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER
-
         ColorRepository.listOfColors.forEach { color ->
             addView(
                 ColorCircleView(context).apply {
@@ -73,7 +73,7 @@ class ColorPickerView : LinearLayout {
                     dip(COLOR_VIEW_PADDING).let {
                         setPadding(it, it, it, it)
                     }
-                    setOnClickListener { onColorClickListener(color) }
+                    setOnClickListener { onColorClickListener(ContextCompat.getColor(context, color)) }
                 })
         }
     }

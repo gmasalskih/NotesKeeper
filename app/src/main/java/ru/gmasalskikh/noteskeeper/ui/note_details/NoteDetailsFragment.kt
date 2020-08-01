@@ -6,7 +6,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
-import kotlinx.android.synthetic.main.note_details_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.gmasalskikh.noteskeeper.R
@@ -14,7 +13,7 @@ import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
 import ru.gmasalskikh.noteskeeper.ui.BaseFragment
 import ru.gmasalskikh.noteskeeper.utils.format
-import timber.log.Timber
+import java.util.*
 
 class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
 
@@ -34,17 +33,13 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
         toolbar = binding.toolbar
         toolbar.inflateMenu(R.menu.note)
         toolbar.setOnMenuItemClickListener {
-
-            when(it.itemId){
-                android.R.id.home -> requireActivity().onBackPressed().let { true }
+            when (it.itemId) {
                 R.id.palette -> togglePalette().let { true }
                 R.id.delete -> deleteNote().let { true }
                 else -> false
             }
         }
-        binding.colorPicker.onColorClickListener = {
-            Timber.i("--- onColorClickListener $it")
-        }
+        binding.colorPicker.onColorClickListener = { color -> viewModel.onColorNoteChange(color) }
         return binding.root
     }
 
@@ -55,11 +50,10 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
     }
 
     override fun renderData(data: Note?) {
-        if (data == null) return
-        binding.noteTitle.setText(data.title)
-        binding.noteText.setText(data.text)
-        binding.toolbar.setBackgroundColor(data.color)
-        binding.toolbar.title = data.lastChanged.format()
+        binding.noteTitle.setText(data?.title ?: "")
+        binding.noteText.setText(data?.text ?: "")
+        binding.toolbar.setBackgroundColor(data?.color ?: R.color.colorPrimary)
+        binding.toolbar.title = data?.lastChanged?.format() ?: Date().format()
     }
 
     override fun onPause() {
@@ -72,20 +66,22 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
     }
 
     private fun togglePalette() {
-        if(binding.colorPicker.isOpen){
-            binding.colorPicker.close()
-        } else {
-            binding.colorPicker.open()
-        }
+        if (binding.colorPicker.isOpen) binding.colorPicker.close()
+        else binding.colorPicker.open()
     }
 
+    private fun createAlertDialog() = AlertDialog.Builder(requireActivity())
+        .setCancelable(true)
+        .setTitle(getText(R.string.del_note_alert_title))
+        .setMessage(getText(R.string.del_note_alert_text))
+        .setPositiveButton(getText(R.string.yes)) { _, _ ->
+            viewModel.delNote()
+            requireActivity().onBackPressed()
+        }.setNegativeButton(getText(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }.create()
+
     private fun deleteNote() {
-        AlertDialog.Builder(requireActivity())
-            .setMessage(getString(R.string.del_note_alert_text))
-            .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
-            .setPositiveButton(getString(R.string.yes)) { dialog, which ->
-                Timber.i("--- deleteNote")
-            }
-            .show()
+        createAlertDialog().show()
     }
 }
