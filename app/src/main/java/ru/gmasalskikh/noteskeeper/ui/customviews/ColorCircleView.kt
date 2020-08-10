@@ -12,7 +12,6 @@ import androidx.annotation.Dimension.PX
 import androidx.core.content.ContextCompat
 import ru.gmasalskikh.noteskeeper.R
 import ru.gmasalskikh.noteskeeper.utils.dip
-import timber.log.Timber
 
 class ColorCircleView @JvmOverloads constructor(context: Context,
                                                 attrs: AttributeSet? = null,
@@ -64,7 +63,6 @@ class ColorCircleView @JvmOverloads constructor(context: Context,
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        Timber.i("--- onMeasure")
         val height = (radius * 2 + paddingTop + paddingBottom).toInt()
         val width = (radius * 2 + paddingStart + paddingEnd).toInt()
         setMeasuredDimension(width, height)

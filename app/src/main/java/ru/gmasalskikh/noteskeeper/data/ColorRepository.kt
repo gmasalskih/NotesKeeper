@@ -16,6 +16,5 @@ class ColorRepository(private val context: Context) {
         )
     }
 
-
     fun getRandomColor(): Int = ContextCompat.getColor(context, listOfColors.random())
 }

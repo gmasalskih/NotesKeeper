@@ -1,97 +1,83 @@
 package ru.gmasalskikh.noteskeeper.data.model
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import ru.gmasalskikh.noteskeeper.data.INotesProvider
+import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.tasks.await
 import ru.gmasalskikh.noteskeeper.data.entity.Note
-import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.utils.toUser
+import java.lang.Exception
 
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 class FirestoreProvider(
     private val store: FirebaseFirestore,
     private val auth: FirebaseAuth,
     private val authUI: AuthUI,
     private val context: Context
-) : INotesProvider {
+) {
 
     companion object {
         private const val NOTES_COLLECTION = "notes"
         private const val USERS_COLLECTION = "users"
     }
 
-    private val listNotesLiveData = MutableLiveData<NoteResult>()
-    private val lastRetrieveNoteLiveData = MutableLiveData<NoteResult>()
-    private val lastSaveNoteLiveData = MutableLiveData<NoteResult>()
-    private val currentUserLiveData = MutableLiveData<User?>()
-
-    override fun signOut() {
-        authUI.signOut(context).addOnCompleteListener { task ->
-            if (task.isSuccessful){
-                currentUserLiveData.value = null
-            }
-        }
+    suspend fun deleteNote(id: String) = try {
+        Result.Success(getUserNotesCollectionReference().document(id).delete().await())
+    } catch (e: Exception) {
+        Result.Error(e)
     }
 
-    override fun getCurrentUser(): LiveData<User?> {
-        auth.currentUser?.let {
-            currentUserLiveData.value = it.toUser() } ?: signOut()
-        return currentUserLiveData
+    suspend fun saveNote(note: Note) = try {
+        Result.Success(getUserNotesCollectionReference().document(note.id).set(note).await())
+    } catch (e: Exception) {
+        Result.Error(e)
     }
 
-    private fun getUserNotesCollection() = getCurrentUser().value?.let {
-        store.collection(USERS_COLLECTION).document(it.id).collection(NOTES_COLLECTION)
+    suspend fun getNoteById(id: String) = try {
+        Result.Success(
+            getUserNotesCollectionReference().document(id).get().await().toObject<Note>()
+        )
+    } catch (e: Exception) {
+        Result.Error(e)
     }
 
-    override fun subscribeToAllNotes(): LiveData<NoteResult> {
-        getUserNotesCollection()?.let { userNotes ->
-            userNotes.addSnapshotListener { snapshot, err ->
+    suspend fun singOut() = try {
+        Result.Success(authUI.signOut(context).await())
+    } catch (e: Exception) {
+        Result.Error(e)
+    }
+
+    fun getCurrentUser() = auth.currentUser?.toUser() ?: throw UnauthorizedUserException()
+
+    private fun getUserNotesCollectionReference() =
+        store.collection(USERS_COLLECTION).document(getCurrentUser().id).collection(NOTES_COLLECTION)
+
+    suspend fun getUserNotes(): ReceiveChannel<Result> {
+        val bc = BroadcastChannel<Result>(1)
+        val scope = CoroutineScope(Dispatchers.IO)
+        try {
+            getUserNotesCollectionReference().addSnapshotListener { snapshot, error ->
                 snapshot?.run {
                     documents.asSequence()
-                        .map { doc -> doc.toObject(Note::class.java) }
-                        .toList()
+                        .map { doc -> doc.toObject<Note>() }
                         .filterNotNull()
-                        .toSortedSet()
-                        .reversed()
+                        .sorted()
                         .toList()
-                        .let { listNotesLiveData.value = NoteResult.Success(it) }
-                } ?: err?.let {
-                    listNotesLiveData.value = NoteResult.Error(it)
-                }
+                        .reversed()
+                        .let { listNotes -> scope.launch { bc.send(Result.Success(listNotes)) } }
+                } ?: error?.let { scope.launch { bc.send(Result.Error(it)) } }
             }
+        } catch (e: Exception) {
+            scope.launch { bc.send(Result.Error(e)) }
+        } finally {
+            return bc.openSubscription()
         }
-        return listNotesLiveData
-    }
-
-    override fun getNoteById(id: String): LiveData<NoteResult> {
-        getUserNotesCollection()?.document(id)?.get()
-            ?.addOnSuccessListener {
-                lastRetrieveNoteLiveData.value = NoteResult.Success(it.toObject(Note::class.java))
-            }?.addOnFailureListener {
-                lastRetrieveNoteLiveData.value = NoteResult.Error(it)
-            }
-        return lastRetrieveNoteLiveData
-    }
-
-    override fun delNoteById(id: String): LiveData<NoteResult> = MutableLiveData<NoteResult>().apply {
-        getUserNotesCollection()?.document(id)?.delete()
-            ?.addOnSuccessListener {
-                value = NoteResult.Success(null)
-            }?.addOnFailureListener {
-                value = NoteResult.Error(it)
-            }
-    }
-
-    override fun saveNote(note: Note): LiveData<NoteResult> {
-        getUserNotesCollection()?.document(note.id)?.set(note)
-            ?.addOnSuccessListener {
-                lastSaveNoteLiveData.value = NoteResult.Success(it)
-            }?.addOnFailureListener {
-                lastSaveNoteLiveData.value = NoteResult.Error(it)
-            }
-        return lastSaveNoteLiveData
     }
 }
+
+class UnauthorizedUserException : Exception()

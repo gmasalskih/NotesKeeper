@@ -12,7 +12,6 @@ import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.ui.BaseActivity
 import ru.gmasalskikh.noteskeeper.ui.main.MainActivity
 import ru.gmasalskikh.noteskeeper.utils.toToast
-import timber.log.Timber
 
 class SplashActivity : BaseActivity<User?, SplashViewState>() {
 
@@ -33,7 +32,9 @@ class SplashActivity : BaseActivity<User?, SplashViewState>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) viewModel.initState()
+        if (savedInstanceState == null) {
+            viewModel.initState()
+        }
     }
 
     private fun startLoginActivity() = startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -48,12 +49,11 @@ class SplashActivity : BaseActivity<User?, SplashViewState>() {
         }
     }
 
-    override fun renderData(data: User?){
+    override fun renderData(data: User?) {
         data?.let { startMainActivity() } ?: startLoginActivity()
     }
 
     override fun renderErr(err: Throwable) {
-        Timber.i(err)
         getText(R.string.sign_in_warning).toString().toToast(this)
         startLoginActivity()
     }

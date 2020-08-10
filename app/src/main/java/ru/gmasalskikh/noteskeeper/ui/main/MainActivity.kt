@@ -4,12 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.nav_header.view.*
 import ru.gmasalskikh.noteskeeper.R
 import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.databinding.ActivityMainBinding
@@ -23,9 +22,6 @@ class MainActivity : BaseActivity<User?, MainActivityViewSate>() {
     lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var navView: View
-    private lateinit var userAvatar: ImageView
-    private lateinit var userName: TextView
-    private lateinit var userEmail: TextView
     override val viewModel: MainActivityViewModel by viewModel()
 
     companion object {
@@ -40,9 +36,6 @@ class MainActivity : BaseActivity<User?, MainActivityViewSate>() {
         navController = findNavController(R.id.navHostFragment)
         binding.navMenu.setupWithNavController(navController)
         navView = binding.navMenu.getHeaderView(0)
-        userAvatar = navView.findViewById(R.id.avatar)
-        userName = navView.findViewById(R.id.user_name)
-        userEmail = navView.findViewById(R.id.user_email)
         viewModel.initViewState()
         binding.navMenu.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -55,10 +48,7 @@ class MainActivity : BaseActivity<User?, MainActivityViewSate>() {
         }
     }
 
-    private fun navigateToSplashActivity() {
-        viewModel.clearObserver()
-        startActivity(SplashActivity.getIntent(this))
-    }
+    private fun navigateToSplashActivity() { startActivity(SplashActivity.getIntent(this)) }
 
     override fun onResume() {
         super.onResume()
@@ -67,13 +57,11 @@ class MainActivity : BaseActivity<User?, MainActivityViewSate>() {
 
     override fun renderData(data: User?) {
         data?.let {
-            userName.text = it.name
-            userEmail.text = it.email
-            userAvatar.circleImgFromUrl(this, it.avatarUri)
-        }
+            navView.user_name.text = it.name
+            navView.user_email.text = it.email
+            navView.avatar.circleImgFromUrl(this, it.avatarUri)
+        } ?: navigateToSplashActivity()
     }
 
-    override fun renderErr(err: Throwable) {
-        navigateToSplashActivity()
-    }
+    override fun renderErr(err: Throwable) { navigateToSplashActivity() }
 }

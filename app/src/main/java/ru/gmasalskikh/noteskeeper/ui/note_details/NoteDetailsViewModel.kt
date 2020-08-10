@@ -1,31 +1,34 @@
 package ru.gmasalskikh.noteskeeper.ui.note_details
 
-import androidx.lifecycle.Observer
-import ru.gmasalskikh.noteskeeper.data.NotesRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import ru.gmasalskikh.noteskeeper.data.INotesProvider
 import ru.gmasalskikh.noteskeeper.data.entity.Note
-import ru.gmasalskikh.noteskeeper.data.model.NoteResult
+import ru.gmasalskikh.noteskeeper.data.model.Result
 import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
 import java.util.*
 
 class NoteDetailsViewModel(
-    private val notesRepository: NotesRepository,
-    id: String?
+    private val notesRepository: INotesProvider,
+    private val id: String?
 ) : BaseViewModel<Note?, NoteDetailsViewState>() {
 
     private var note: Note? = null
-    private val observer = Observer<NoteResult> { noteResult ->
-        when (noteResult) {
-            is NoteResult.Success<*> -> {
-                (noteResult.data as? Note)?.let { note = it }
-                setNewViewState(data = note)
-            }
-            is NoteResult.Error -> setNewViewState(err = noteResult.err)
-        }
-    }
 
     init {
-        if (id.isNullOrEmpty()) setNewViewState(data = Note().also { note = it })
-        else notesRepository.getNoteById(id).observeForever(observer)
+        initViewState()
+    }
+
+    private fun initViewState() = viewModelScope.launch {
+        if (id.isNullOrEmpty()) saveViewState(data = Note().also { note = it })
+        else notesRepository.getNoteById(id).let { result ->
+            when (result) {
+                is Result.Success<*> -> saveViewState(data = (result.data as? Note).also {
+                    note = it
+                })
+                is Result.Error -> saveViewState(err = result.err)
+            }
+        }
     }
 
     fun onTextChangeTitle(title: String) {
@@ -38,20 +41,25 @@ class NoteDetailsViewModel(
 
     fun onColorNoteChange(color: Int) {
         note = note?.copy(color = color, lastChanged = Date())
-        setNewViewState(data = note)
+        saveViewState(data = note)
     }
 
-    private fun setNewViewState(data: Note? = null, err: Throwable? = null) {
-        this.viewState.value = NoteDetailsViewState(data = data, err = err)
+    fun delNote() = viewModelScope.launch {
+        note?.let { data ->
+            notesRepository.delNoteById(data.id).let { result ->
+                when (result) {
+                    is Result.Success<*> -> saveViewState(data = Note().also { note = it })
+                    is Result.Error -> saveViewState(err = result.err)
+                }
+            }
+        }
     }
 
-    fun delNote() {
-        note?.let { notesRepository.delNoteById(it.id) }
-        note = Note()
-        setNewViewState(data = note)
+    fun saveChanges() = viewModelScope.launch {
+        note?.let { if (!it.isEmpty()) notesRepository.saveNote(it) }
     }
 
-    fun saveChanges() = note?.let { if (!it.isEmpty()) notesRepository.saveNote(it) }
-
-    override fun onCleared() = notesRepository.getNotes().removeObserver(observer)
+    override fun saveViewState(data: Note?, err: Throwable?) {
+        viewState.value = NoteDetailsViewState(data = data, err = err)
+    }
 }

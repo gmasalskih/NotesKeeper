@@ -1,20 +1,23 @@
 package ru.gmasalskikh.noteskeeper.ui.splash
 
-import ru.gmasalskikh.noteskeeper.data.NotesRepository
+import ru.gmasalskikh.noteskeeper.data.INotesProvider
 import ru.gmasalskikh.noteskeeper.data.entity.User
 import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
-import ru.gmasalskikh.noteskeeper.utils.observeOnce
+import java.lang.Exception
 
 class SplashActivityViewModel(
-    private val notesRepository: NotesRepository
+    private val notesRepository: INotesProvider
 ) : BaseViewModel<User?, SplashViewState>() {
 
     fun initState() {
-        notesRepository.getCurrentUser().observeOnce { user ->
-            viewState.value = user?.let { SplashViewState(data = it) } ?: SplashViewState(
-                data = null,
-                err = Throwable("You have to sign in!")
-            )
+        try {
+            saveViewState(data = notesRepository.getCurrentUser())
+        } catch (e: Exception) {
+            saveViewState(err = e)
         }
+    }
+
+    override fun saveViewState(data: User?, err: Throwable?) {
+        viewState.value = SplashViewState(data = data, err = err)
     }
 }

@@ -1,15 +1,15 @@
 package ru.gmasalskikh.noteskeeper.data
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.channels.ReceiveChannel
 import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.data.entity.User
-import ru.gmasalskikh.noteskeeper.data.model.NoteResult
+import ru.gmasalskikh.noteskeeper.data.model.Result
 
 interface INotesProvider {
-    fun subscribeToAllNotes(): LiveData<NoteResult>
-    fun getNoteById(id: String): LiveData<NoteResult>
-    fun delNoteById(id: String): LiveData<NoteResult>
-    fun saveNote(note: Note): LiveData<NoteResult>
-    fun getCurrentUser(): LiveData<User?>
-    fun signOut()
+    fun getCurrentUser(): User
+    suspend fun getNotes(): ReceiveChannel<Result>
+    suspend fun getNoteById(id: String): Result
+    suspend fun delNoteById(id: String): Result
+    suspend fun saveNote(note: Note): Result
+    suspend fun signOut(): Result
 }

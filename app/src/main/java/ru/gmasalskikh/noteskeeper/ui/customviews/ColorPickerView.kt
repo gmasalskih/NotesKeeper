@@ -11,7 +11,6 @@ import androidx.annotation.Dimension.DP
 import androidx.core.content.ContextCompat
 import ru.gmasalskikh.noteskeeper.data.ColorRepository
 import ru.gmasalskikh.noteskeeper.utils.dip
-import timber.log.Timber
 
 class ColorPickerView : LinearLayout {
 
@@ -67,7 +66,6 @@ class ColorPickerView : LinearLayout {
         ColorRepository.listOfColors.forEach { color ->
             addView(
                 ColorCircleView(context).apply {
-                    Timber.i("--- $color")
                     fillColorRes = color
                     tag = color
                     dip(COLOR_VIEW_PADDING).let {

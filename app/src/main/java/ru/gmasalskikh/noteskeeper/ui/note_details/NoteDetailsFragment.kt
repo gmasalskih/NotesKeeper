@@ -3,7 +3,6 @@ package ru.gmasalskikh.noteskeeper.ui.note_details
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,6 +12,7 @@ import ru.gmasalskikh.noteskeeper.data.entity.Note
 import ru.gmasalskikh.noteskeeper.databinding.NoteDetailsFragmentBinding
 import ru.gmasalskikh.noteskeeper.ui.BaseFragment
 import ru.gmasalskikh.noteskeeper.utils.format
+import ru.gmasalskikh.noteskeeper.utils.toToast
 import java.util.*
 
 class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
@@ -61,9 +61,7 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
         viewModel.saveChanges()
     }
 
-    override fun renderErr(err: Throwable) {
-        Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
-    }
+    override fun renderErr(err: Throwable) { err.message?.toToast(requireContext()) }
 
     private fun togglePalette() {
         if (binding.colorPicker.isOpen) binding.colorPicker.close()
@@ -76,12 +74,9 @@ class NoteDetailsFragment : BaseFragment<Note?, NoteDetailsViewState>() {
         .setMessage(getText(R.string.del_note_alert_text))
         .setPositiveButton(getText(R.string.yes)) { _, _ ->
             viewModel.delNote()
-            requireActivity().onBackPressed()
         }.setNegativeButton(getText(R.string.no)) { dialog, _ ->
             dialog.dismiss()
         }.create()
 
-    private fun deleteNote() {
-        createAlertDialog().show()
-    }
+    private fun deleteNote() { createAlertDialog().show() }
 }

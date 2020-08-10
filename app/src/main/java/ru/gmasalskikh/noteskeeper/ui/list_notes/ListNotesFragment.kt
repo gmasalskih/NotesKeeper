@@ -29,9 +29,7 @@ class ListNotesFragment : BaseFragment<List<Note>?, ListNotesViewState>() {
         binding = ListNotesFragmentBinding.inflate(inflater, container, false)
         adapter = ListNotesAdapter(
             clickListener = ListNotesAdapter.NoteClickListener { note -> viewModel.onClickNote(note) },
-            longClickListener = ListNotesAdapter.NoteLongClickListener { note ->
-                viewModel.onLongClickNote(note)
-            }
+            longClickListener = ListNotesAdapter.NoteLongClickListener { note -> viewModel.onLongClickNote(note) }
         )
         toolbar = binding.toolbar
         binding.lifecycleOwner = this

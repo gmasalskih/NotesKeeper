@@ -1,38 +1,35 @@
 package ru.gmasalskikh.noteskeeper.ui.main
 
-import androidx.lifecycle.Observer
-import ru.gmasalskikh.noteskeeper.data.NotesRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import ru.gmasalskikh.noteskeeper.data.INotesProvider
 import ru.gmasalskikh.noteskeeper.data.entity.User
+import ru.gmasalskikh.noteskeeper.data.model.Result
 import ru.gmasalskikh.noteskeeper.ui.BaseViewModel
-import timber.log.Timber
+import java.lang.Exception
 
 class MainActivityViewModel(
-    private val notesRepository: NotesRepository
+    private val notesRepository: INotesProvider
 ) : BaseViewModel<User?, MainActivityViewSate>() {
 
-    private val observer = Observer<User?> { user ->
-        viewState.value =
-            user?.let { MainActivityViewSate(data = it) } ?: MainActivityViewSate(
-                data = null,
-                err = Throwable("You have to sign in!")
-            )
+    fun initViewState() {
+        try {
+            saveViewState(data = notesRepository.getCurrentUser())
+        } catch (e: Exception) {
+            saveViewState(err = e)
+        }
     }
 
-    fun initViewState(){
-        notesRepository.getCurrentUser().observeForever(observer)
+    fun signOut() = viewModelScope.launch {
+        notesRepository.signOut().let { result ->
+            when (result) {
+                is Result.Success<*> -> saveViewState(err = Throwable("User have to sing in"))
+                is Result.Error -> saveViewState(err = result.err)
+            }
+        }
     }
 
-    fun signOut() {
-        notesRepository.signOut()
-    }
-
-    fun clearObserver(){
-        notesRepository.getCurrentUser().removeObserver(observer)
-    }
-
-    override fun onCleared() {
-        Timber.i("--- onCleared")
-        super.onCleared()
-        clearObserver()
+    override fun saveViewState(data: User?, err: Throwable?) {
+        viewState.value = MainActivityViewSate(data = data, err = err)
     }
 }

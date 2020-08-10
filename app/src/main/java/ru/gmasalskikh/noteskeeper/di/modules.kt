@@ -3,6 +3,8 @@ package ru.gmasalskikh.noteskeeper.di
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -15,10 +17,12 @@ import ru.gmasalskikh.noteskeeper.ui.main.MainActivityViewModel
 import ru.gmasalskikh.noteskeeper.ui.note_details.NoteDetailsViewModel
 import ru.gmasalskikh.noteskeeper.ui.splash.SplashActivityViewModel
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 val providersModule = module {
     single { FirebaseFirestore.getInstance() }
     single { FirebaseAuth.getInstance() }
-    single<INotesProvider> {
+    single {
         FirestoreProvider(
             store = get(),
             auth = get(),
@@ -26,7 +30,7 @@ val providersModule = module {
             context = androidContext()
         )
     }
-    single { NotesRepository(get()) }
+    single <INotesProvider> { NotesRepository(get()) }
     single { ColorRepository(androidContext()) }
     single { AuthUI.getInstance() }
     factory { (drawable: Int, style: Int) ->
